@@ -13,6 +13,7 @@ from shapely.geometry import MultiPoint
 import gwemopt
 import gwemopt.moc
 import gwemopt.segments
+from gwemopt.moc.fov import Fov2Moc
 from gwemopt.utils.geometry import angular_distance
 
 TILE_TYPES = ["moc", "galaxy"]
@@ -522,9 +523,7 @@ def perturb_tiles(params, config_struct, telescope, map_struct, tile_struct):
                 vals.append(0)
                 continue
 
-            moc_struct_temp = gwemopt.moc.moc.Fov2Moc(
-                params, config_struct, telescope, ra, dec, nside
-            )
+            moc_struct_temp = Fov2Moc(params, config_struct, telescope, ra, dec, nside)
             idx = np.where(map_struct_hold["prob"][moc_struct_temp["ipix"]] == -1)[0]
             idx = np.setdiff1d(idx, ipix_keep)
             if len(map_struct_hold["prob"][moc_struct_temp["ipix"]]) == 0:
@@ -546,9 +545,7 @@ def perturb_tiles(params, config_struct, telescope, map_struct, tile_struct):
             vals.append(val)
         idx = np.argmax(vals)
         ra, dec = ras[idx], decs[idx]
-        moc_struct[key] = gwemopt.moc.moc.Fov2Moc(
-            params, config_struct, telescope, ra, dec, nside
-        )
+        moc_struct[key] = Fov2Moc(params, config_struct, telescope, ra, dec, nside)
 
         map_struct_hold["prob"][moc_struct[key]["ipix"]] = -1
         ipix_keep = np.setdiff1d(ipix_keep, moc_struct[key]["ipix"])
@@ -842,7 +839,7 @@ def galaxy(params, map_struct, catalog_struct: pd.DataFrame):
         moc_struct = {}
         cnt = 0
         for _, row in catalog_struct_new.iterrows():
-            moc_struct[cnt] = gwemopt.moc.moc.Fov2Moc(
+            moc_struct[cnt] = Fov2Moc(
                 params, config_struct, telescope, row["ra"], row["dec"], nside
             )
             moc_struct[cnt]["galaxies"] = row["galaxies"]
