@@ -12,4 +12,9 @@ def load_moc(output_path: Path):
     with open(output_path, "r") as f:
         moc_struct = json.load(f)
 
-    return moc_struct
+    new = {}
+
+    for key in moc_struct.keys():
+        new[float(key)] = moc_struct[key]
+
+    return new

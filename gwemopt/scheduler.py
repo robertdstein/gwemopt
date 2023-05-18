@@ -475,7 +475,7 @@ def scheduler(params, config_struct, tile_struct):
             filts = filts[1:]
             exposurelist = exposurelist[1:]
         else:
-            tile_struct_hold = tile_struct[str(int(key))]
+            tile_struct_hold = tile_struct[key]
             mjd_exposure_start = exposurelist[0][0]
             nkeys = len(keys)
             for jj in range(nkeys):
