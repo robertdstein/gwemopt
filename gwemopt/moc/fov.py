@@ -32,15 +32,12 @@ def Fov2Moc(params, config_struct, telescope, ra_pointing, dec_pointing, nside):
     else:
         raise ValueError("FOV type not recognized")
 
-    if params["doChipGaps"]:
-        if telescope == "ZTF":
-            ipixs = get_ztf_quadrant_ipix(nside, ra_pointing, dec_pointing)
-            ipix = list({int(y) for x in ipixs for y in x})
-        elif telescope == "DECam":
-            ipixs = get_decam_quadrant_ipix(nside, ra_pointing, dec_pointing)
-            ipix = list({int(y) for x in ipixs for y in x})
-        else:
-            raise ValueError("Chip gaps only available for DECam and ZTF")
+    if telescope == "ZTF":
+        ipixs = get_ztf_quadrant_ipix(nside, ra_pointing, dec_pointing)
+        ipix = list({int(y) for x in ipixs for y in x})
+    elif telescope == "DECam":
+        ipixs = get_decam_quadrant_ipix(nside, ra_pointing, dec_pointing)
+        ipix = list({int(y) for x in ipixs for y in x})
 
     moc_struct["ra"] = float(ra_pointing)
     moc_struct["dec"] = float(dec_pointing)
@@ -49,10 +46,5 @@ def Fov2Moc(params, config_struct, telescope, ra_pointing, dec_pointing, nside):
     moc_struct["area"] = area
 
     moc_struct["moc"] = []
-
-    # for x in moc_struct:
-    #     print(x, type(moc_struct[x]))
-    #
-    # raise
 
     return moc_struct

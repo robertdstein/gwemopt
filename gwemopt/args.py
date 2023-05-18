@@ -123,7 +123,6 @@ def parse_args(args):
     parser.add_argument("--max_nb_tiles", default=None, type=int)
     parser.add_argument("--doReferences", action="store_true", default=False)
 
-    parser.add_argument("--doChipGaps", action="store_true", default=False)
     parser.add_argument("--doUsePrimary", action="store_true", default=False)
     parser.add_argument("--doUseSecondary", action="store_true", default=False)
 

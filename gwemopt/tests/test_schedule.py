@@ -58,11 +58,25 @@ def test_scheduler():
             # ("WINTER", []),
             # ('TNT', ["--tilesType", "galaxy", "--powerlaw_dist_exp", "1.0", "--doCatalog", "--galaxy_grade", "Sloc"]),
         ]
+
+        extra_test_files = [
+            "coverage_ZTF.dat",
+            "map.dat",
+            "summary.dat",
+            "efficiency.txt",
+            "efficiency_tophat.txt",
+        ] + [f"tiles_coverage_int_{t}.txt" for t, _ in telescope_list]
+
         for telescope, extra in telescope_list:
             # To regenerate the test data, uncomment the following lines
             temp_dir = Path(__file__).parent.absolute().joinpath("temp")
-            temp_dir.unlink(missing_ok=True)
             temp_dir.mkdir(exist_ok=True)
+
+            # In any case, clear cache
+            for extra_test_file in extra_test_files:
+                new = Path(temp_dir).joinpath(extra_test_file)
+                if new.exists():
+                    new.unlink()
 
             args = [
                 f"-t",
