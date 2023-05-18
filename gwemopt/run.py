@@ -104,12 +104,6 @@ def run(args):
             print("Plotting tiles struct...")
             make_tile_plots(params, map_struct, tile_structs)
 
-    # for x, val in tile_structs.items():
-    #     print(x, val.keys())
-    #     raise
-    #
-    # raise
-
     if args.doSchedule:
         if args.doTiles:
             print("Generating coverage...")

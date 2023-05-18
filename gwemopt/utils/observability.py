@@ -17,7 +17,7 @@ def calculate_observability(params, map_struct):
     npix = hp.nside2npix(nside)
     gpstime = params["gpstime"]
     event_time = Time(gpstime, format="gps", scale="utc")
-    dts = np.arange(0, 1, 0.1)
+    dts = np.arange(0, 3, 0.02)
 
     observatory_struct = {}
 
