@@ -3,6 +3,7 @@ Module for parsing command line arguments
 """
 import argparse
 
+from gwemopt.moc.get import DEFAULT_NSIDE
 from gwemopt.paths import CATALOG_DIR, DEFAULT_LIGHTCURVE_DIR
 
 
@@ -81,7 +82,7 @@ def parse_args(args):
     parser.add_argument("--Ntiles", default=10, type=int)
 
     parser.add_argument("--Ndet", default=1, type=int)
-    parser.add_argument("--nside", default=256, type=int)
+    parser.add_argument("--nside", default=DEFAULT_NSIDE, type=int)
     parser.add_argument("--DScale", default=1.0, type=float)
     parser.add_argument("--Tobs", default="0.0,1.0")
 

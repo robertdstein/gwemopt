@@ -7,7 +7,7 @@ import urllib.parse
 import numpy as np
 import requests
 
-from gwemopt.utils.pixels import getCirclePixels, getSquarePixels
+from gwemopt.moc.pixels import getCirclePixels, getSquarePixels
 
 
 def get_treasuremap_pointings(params):

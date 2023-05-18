@@ -155,9 +155,6 @@ def export_schedule_xml(xmlfile, map_struct, coverage_struct, config_struct):
 
     for ii in range(len(coverage_struct["ipix"])):
         data = coverage_struct["data"][ii, :]
-        ipix = coverage_struct["ipix"][ii]
-
-        prob = np.sum(map_struct["prob"][ipix])
 
         ra, dec = data[0], data[1]
         observ_time, exposure_time, field_id, prob, airmass = (
@@ -231,9 +228,6 @@ def summary(params, map_struct, coverage_struct, catalog_struct=None):
 
                 data = coverage_struct["data"][ii, :]
                 filt = coverage_struct["filters"][ii]
-                ipix = coverage_struct["ipix"][ii]
-
-                prob = np.sum(map_struct["prob"][ipix])
 
                 ra, dec = data[0], data[1]
                 observ_time, mag, exposure_time, field_id, prob, airmass = (
@@ -324,10 +318,7 @@ def summary(params, map_struct, coverage_struct, catalog_struct=None):
 
             for ii in range(len(coverage_struct["ipix"])):
                 data = coverage_struct["data"][ii, :]
-                filt = coverage_struct["filters"][ii]
                 ipix = coverage_struct["ipix"][ii]
-
-                prob = np.sum(map_struct["prob"][ipix])
 
                 if data[2] > event_mjd + tt:
                     continue

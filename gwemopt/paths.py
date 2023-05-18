@@ -18,3 +18,8 @@ SKYMAP_DIR.mkdir(exist_ok=True, parents=True)
 
 CATALOG_DIR = DEFAULT_BASE_OUTPUT_DIR.joinpath("catalogs")
 CATALOG_DIR.mkdir(exist_ok=True, parents=True)
+
+MOC_LOCAL_CACHE = DEFAULT_BASE_OUTPUT_DIR.joinpath("moc")
+MOC_LOCAL_CACHE.mkdir(exist_ok=True, parents=True)
+MOC_DEFAULT_CACHE = DATA_DIR.joinpath("moc")
+MOC_DEFAULT_CACHE.mkdir(exist_ok=True, parents=True)

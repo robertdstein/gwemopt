@@ -433,6 +433,7 @@ def scheduler(params, config_struct, tile_struct):
     import gwemopt.segments
 
     # import gwemopt.segments_astroplan
+
     coverage_struct = {}
     coverage_struct["data"] = np.empty((0, 8))
     coverage_struct["filters"] = []
@@ -474,7 +475,7 @@ def scheduler(params, config_struct, tile_struct):
             filts = filts[1:]
             exposurelist = exposurelist[1:]
         else:
-            tile_struct_hold = tile_struct[key]
+            tile_struct_hold = tile_struct[str(int(key))]
             mjd_exposure_start = exposurelist[0][0]
             nkeys = len(keys)
             for jj in range(nkeys):
@@ -538,7 +539,7 @@ def scheduler(params, config_struct, tile_struct):
             )
 
             coverage_struct["filters"].append(filt)
-            coverage_struct["patch"].append(tile_struct_hold["patch"])
+            # coverage_struct["patch"].append(tile_struct_hold["patch"])
             coverage_struct["ipix"].append(tile_struct_hold["ipix"])
             coverage_struct["area"].append(tile_struct_hold["area"])
             if params["tilesType"] == "galaxy":

@@ -60,8 +60,8 @@ def test_scheduler():
         ]
         for telescope, extra in telescope_list:
             # To regenerate the test data, uncomment the following lines
-            # temp_dir = Path(__file__).parent.absolute().joinpath("temp")
-            # temp_dir.mkdir(exist_ok=True)
+            temp_dir = Path(__file__).parent.absolute().joinpath("temp")
+            temp_dir.mkdir(exist_ok=True)
 
             args = [
                 f"-t",
@@ -71,7 +71,7 @@ def test_scheduler():
                 "-e",
                 str(test_skymap),
                 "--doTiles",
-                "--doPlots",
+                # "--doPlots",
                 "--doSchedule",
                 "--timeallocationType",
                 "powerlaw",

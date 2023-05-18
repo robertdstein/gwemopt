@@ -11,6 +11,7 @@ import gwemopt.plotting
 import gwemopt.scheduler
 import gwemopt.tiles
 from gwemopt.io.schedule import read_schedule
+from gwemopt.moc.pixels import getCirclePixels, getSquarePixels
 from gwemopt.tiles import (
     balance_tiles,
     check_overlapping_tiles,
@@ -22,7 +23,6 @@ from gwemopt.tiles import (
     slice_map_tiles,
     slice_number_tiles,
 )
-from gwemopt.utils.pixels import getCirclePixels, getSquarePixels
 from gwemopt.utils.treasuremap import get_treasuremap_pointings
 
 

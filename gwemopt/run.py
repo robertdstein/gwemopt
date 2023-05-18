@@ -11,6 +11,7 @@ import gwemopt.segments
 from gwemopt.args import parse_args
 from gwemopt.catalogs import get_catalog
 from gwemopt.io import get_skymap, read_skymap, summary
+from gwemopt.moc.get import get_moc
 from gwemopt.params import params_struct
 from gwemopt.paths import DEFAULT_BASE_OUTPUT_DIR
 from gwemopt.plotting import (
@@ -102,6 +103,12 @@ def run(args):
         if args.doPlots:
             print("Plotting tiles struct...")
             make_tile_plots(params, map_struct, tile_structs)
+
+    for x, val in tile_structs.items():
+        print(x, val.keys())
+        raise
+
+    raise
 
     if args.doSchedule:
         if args.doTiles:

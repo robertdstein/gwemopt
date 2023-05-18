@@ -522,7 +522,7 @@ def perturb_tiles(params, config_struct, telescope, map_struct, tile_struct):
                 vals.append(0)
                 continue
 
-            moc_struct_temp = gwemopt.moc.Fov2Moc(
+            moc_struct_temp = gwemopt.moc.moc.Fov2Moc(
                 params, config_struct, telescope, ra, dec, nside
             )
             idx = np.where(map_struct_hold["prob"][moc_struct_temp["ipix"]] == -1)[0]
@@ -546,7 +546,7 @@ def perturb_tiles(params, config_struct, telescope, map_struct, tile_struct):
             vals.append(val)
         idx = np.argmax(vals)
         ra, dec = ras[idx], decs[idx]
-        moc_struct[key] = gwemopt.moc.Fov2Moc(
+        moc_struct[key] = gwemopt.moc.moc.Fov2Moc(
             params, config_struct, telescope, ra, dec, nside
         )
 
@@ -842,7 +842,7 @@ def galaxy(params, map_struct, catalog_struct: pd.DataFrame):
         moc_struct = {}
         cnt = 0
         for _, row in catalog_struct_new.iterrows():
-            moc_struct[cnt] = gwemopt.moc.Fov2Moc(
+            moc_struct[cnt] = gwemopt.moc.moc.Fov2Moc(
                 params, config_struct, telescope, row["ra"], row["dec"], nside
             )
             moc_struct[cnt]["galaxies"] = row["galaxies"]
@@ -1291,12 +1291,17 @@ def moc(params, map_struct, moc_structs, doSegments=True):
         moc_struct = moc_structs[telescope]
 
         if params["timeallocationType"] == "absmag":
-            tile_struct = gwemopt.tiles.absmag_tiles_struct(
+            tile_struct = absmag_tiles_struct(
                 params, config_struct, telescope, map_struct, moc_struct
             )
         elif params["timeallocationType"] == "powerlaw":
             tile_struct = powerlaw_tiles_struct(
                 params, config_struct, telescope, map_struct, moc_struct
+            )
+        else:
+            raise ValueError(
+                f"timeallocationType must be either absmag or powerlaw. "
+                f"You have: {params['timeallocationType']}"
             )
 
         if doSegments:

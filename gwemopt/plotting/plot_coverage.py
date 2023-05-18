@@ -65,6 +65,7 @@ def plot_tiles_coverage(params, map_struct, coverage_struct, plot_sun_moon=False
     hp.mollview(map_struct["prob"], title="", unit=UNIT, cbar=CBAR_BOOL, cmap=cmap)
     add_edges()
     ax = plt.gca()
+<<<<<<< HEAD
     for ii in range(len(coverage_struct["ipix"])):
         patch = coverage_struct["patch"][ii]
 
@@ -76,6 +77,20 @@ def plot_tiles_coverage(params, map_struct, coverage_struct, plot_sun_moon=False
         patch_cpy.figure = None
         patch_cpy.set_transform(ax.transData)
         hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+=======
+    # for ii in range(len(coverage_struct["ipix"])):
+    #     patch = coverage_struct["patch"][ii]
+    #
+    #     # hp.visufunc.projplot(corners[:,0], corners[:,1], 'k', lonlat = True)
+    #     if patch == []:
+    #         continue
+    #
+    #     patch_cpy = copy.copy(patch)
+    #     patch_cpy.axes = None
+    #     patch_cpy.figure = None
+    #     patch_cpy.set_transform(ax.transData)
+    #     hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+>>>>>>> 145525b (midway on moc cache)
 
     if plot_sun_moon:
         add_sun_moon(params)
@@ -132,20 +147,21 @@ def plot_tiles_coverage_int(
                 color=color,
             )
     else:
-        for ii in range(len(coverage_struct["ipix"])):
-            patch = coverage_struct["patch"][ii]
-
-            idx = params["telescopes"].index(coverage_struct["telescope"][ii])
-
-            if patch == []:
-                continue
-            patch_cpy = copy.copy(patch)
-            patch_cpy.axes = None
-            patch_cpy.figure = None
-            patch_cpy.set_transform(ax.transData)
-            patch_cpy.set_facecolor(colors[idx])
-
-            hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+        pass
+        # for ii in range(len(coverage_struct["ipix"])):
+        # patch = coverage_struct["patch"][ii]
+        #
+        # idx = params["telescopes"].index(coverage_struct["telescope"][ii])
+        #
+        # if patch == []:
+        #     continue
+        # patch_cpy = copy.copy(patch)
+        # patch_cpy.axes = None
+        # patch_cpy.figure = None
+        # patch_cpy.set_transform(ax.transData)
+        # patch_cpy.set_facecolor(colors[idx])
+        #
+        # hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
 
     idxs = np.argsort(coverage_struct["data"][:, 2])
     plt.axes(ax2)
@@ -290,6 +306,7 @@ def plot_coverage_scaled(params, map_struct, coverage_struct, plot_sun_moon, max
     hp.mollview(map_struct["prob"], title="", unit=UNIT, cbar=CBAR_BOOL, cmap=cmap)
     add_edges()
     ax = plt.gca()
+<<<<<<< HEAD
     for ii in range(len(coverage_struct["ipix"])):
         data = coverage_struct["data"][ii, :]
         patch = coverage_struct["patch"][ii]
@@ -309,6 +326,28 @@ def plot_coverage_scaled(params, map_struct, coverage_struct, plot_sun_moon, max
                 alpha = 1.0
             patch_cpy.set_alpha(alpha)
         hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+=======
+    # for ii in range(len(coverage_struct["ipix"])):
+    #     data = coverage_struct["data"][ii, :]
+    #     patch = coverage_struct["patch"][ii]
+    #
+    #     if patch == []:
+    #         continue
+    #
+    #     # hp.visufunc.projplot(corners[:,0], corners[:,1], 'k', lonlat = True)
+    #     patch_cpy = copy.copy(patch)
+    #     patch_cpy.axes = None
+    #     patch_cpy.figure = None
+    #     patch_cpy.set_transform(ax.transData)
+    #     current_alpha = patch_cpy.get_alpha()
+    #
+    #     if current_alpha > 0.0:
+    #         alpha = data[4] / max_time
+    #         if alpha > 1:
+    #             alpha = 1.0
+    #         patch_cpy.set_alpha(alpha)
+    #     hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+>>>>>>> 145525b (midway on moc cache)
 
     if plot_sun_moon:
         add_sun_moon(params)
@@ -339,17 +378,17 @@ def plot_coverage_scaled(params, map_struct, coverage_struct, plot_sun_moon, max
             ax = plt.gca()
 
             idx = np.where(coverage_struct["data"][:, 2] <= mjd)[0]
-            for ii in idx:
-                patch = coverage_struct["patch"][ii]
-
-                if patch == []:
-                    continue
-
-                patch_cpy = copy.copy(patch)
-                patch_cpy.axes = None
-                patch_cpy.figure = None
-                patch_cpy.set_transform(ax.transData)
-                hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
+            # for ii in idx:
+            #     patch = coverage_struct["patch"][ii]
+            #
+            #     if patch == []:
+            #         continue
+            #
+            #     patch_cpy = copy.copy(patch)
+            #     patch_cpy.axes = None
+            #     patch_cpy.figure = None
+            #     patch_cpy.set_transform(ax.transData)
+            #     hp.projaxes.HpxMollweideAxes.add_patch(ax, patch_cpy)
             plt.savefig(plot_name, dpi=200)
             plt.close()
 
