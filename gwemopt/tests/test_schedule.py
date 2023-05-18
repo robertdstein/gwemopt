@@ -33,7 +33,6 @@ def test_scheduler():
                 "ZTF",
                 [
                     "--doReferences",
-                    "--doChipGaps",
                     "--doEfficiency",
                     "--doCoverage",
                     "--coverageFiles",
@@ -53,7 +52,7 @@ def test_scheduler():
                     "GLADE",
                 ],
             ),
-            ("DECam", ["--doChipGaps", "--max_nb_tiles", "5", "--doMinimalTiling"]),
+            ("DECam", ["--max_nb_tiles", "5"]),
             # ('TRE', []),
             # ("WINTER", []),
             # ('TNT', ["--tilesType", "galaxy", "--powerlaw_dist_exp", "1.0", "--doCatalog", "--galaxy_grade", "Sloc"]),
