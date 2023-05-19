@@ -2,6 +2,8 @@ import healpy as hp
 import matplotlib
 import numpy as np
 
+ALL_FOV_TYPES = ["square", "circle"]
+
 
 def get_ellipse_coords(a=0.0, b=0.0, x=0.0, y=0.0, angle=0.0, npts=10):
     """Draws an ellipse using (360*k + 1) discrete points; based on pseudo code
@@ -36,10 +38,6 @@ def getCirclePixels(
     dec_pointing,
     radius,
     nside,
-    alpha=0.4,
-    color="k",
-    edgecolor="k",
-    rotation=None,
 ):
     theta = 0.5 * np.pi - np.deg2rad(dec_pointing)
     phi = np.deg2rad(ra_pointing)
@@ -90,85 +88,52 @@ def getCirclePixels(
     return ipix, radecs.T[0], radecs.T[1], area
 
 
-def getRectanglePixels(
+def get_circle_path(
     ra_pointing,
     dec_pointing,
-    raSide,
-    decSide,
-    nside,
+    radius,
     alpha=0.4,
     color="k",
     edgecolor="k",
-    rotation=None,
 ):
-    area = raSide * decSide
-
-    decCorners = (dec_pointing - decSide / 2.0, dec_pointing + decSide / 2.0)
-
-    # security for the periodic limit conditions
-    radecs = []
-    for d in decCorners:
-        if d > 90.0:
-            d = 180.0 - d
-        elif d < -90.0:
-            d = -180 - d
-
-        raCorners = (
-            ra_pointing - (raSide / 2.0) / np.cos(np.deg2rad(d)),
-            ra_pointing + (raSide / 2.0) / np.cos(np.deg2rad(d)),
-        )
-        # security for the periodic limit conditions
-        for r in raCorners:
-            if r > 360.0:
-                r = r - 360.0
-            elif r < 0.0:
-                r = 360.0 + r
-            radecs.append([r, d])
+    radecs = get_ellipse_coords(
+        a=radius / np.cos(np.deg2rad(dec_pointing)),
+        b=radius,
+        x=ra_pointing,
+        y=dec_pointing,
+        angle=0.0,
+        npts=25,
+    )
+    idx = np.where(radecs[:, 1] > 90.0)[0]
+    radecs[idx, 1] = 180.0 - radecs[idx, 1]
+    idx = np.where(radecs[:, 1] < -90.0)[0]
+    radecs[idx, 1] = -180.0 - radecs[idx, 1]
+    idx = np.where(radecs[:, 0] > 360.0)[0]
+    radecs[idx, 0] = 720.0 - radecs[idx, 0]
+    idx = np.where(radecs[:, 0] < 0.0)[0]
+    radecs[idx, 0] = 360.0 + radecs[idx, 0]
 
     radecs = np.array(radecs)
-    idx1 = np.where(radecs[:, 0] >= 180.0)[0]
-    idx2 = np.where(radecs[:, 0] < 180.0)[0]
-    idx3 = np.where(radecs[:, 0] > 300.0)[0]
-    idx4 = np.where(radecs[:, 0] < 60.0)[0]
-    if (len(idx1) > 0 and len(idx2) > 0) and not (len(idx3) > 0 and len(idx4) > 0):
-        alpha = 0.0
+    # idx1 = np.where(radecs[:, 0] >= 180.0)[0]
+    # idx2 = np.where(radecs[:, 0] < 180.0)[0]
+    # idx3 = np.where(radecs[:, 0] > 300.0)[0]
+    # idx4 = np.where(radecs[:, 0] < 60.0)[0]
+    # if (len(idx1) > 0 and len(idx2) > 0) and not (len(idx3) > 0 and len(idx4) > 0):
+    #     alpha = 0.0
 
-    idx1 = np.where(np.abs(radecs[:, 1]) >= 87.0)[0]
-    if len(idx1) == 4:
-        return [], [], [], []
+    xyz = hp.ang2vec(radecs[:, 0], radecs[:, 1], lonlat=True)
 
-    idx1 = np.where((radecs[:, 1] >= 87.0) | (radecs[:, 1] <= -87.0))[0]
-    if len(idx1) > 0:
-        radecs = np.delete(radecs, idx1[0], 0)
+    proj = hp.projector.MollweideProj(coord=None)
+    x, y = proj.vec2xy(xyz[:, 0], xyz[:, 1], xyz[:, 2])
+    xy = np.zeros(radecs.shape)
+    xy[:, 0] = x
+    xy[:, 1] = y
+    path = matplotlib.path.Path(xy)
+    patch = matplotlib.patches.PathPatch(
+        path, alpha=alpha, color=color, fill=True, zorder=3, edgecolor=edgecolor
+    )
 
-    xyz = []
-    for r, d in radecs:
-        xyz.append(hp.ang2vec(r, d, lonlat=True))
-
-    npts, junk = radecs.shape
-    if npts == 4:
-        xyz = [xyz[0], xyz[1], xyz[3], xyz[2]]
-        ipix = [int(x) for x in hp.query_polygon(nside, np.array(xyz))]
-    else:
-        ipix = [int(x) for x in hp.query_polygon(nside, np.array(xyz))]
-
-    # idx1 = np.where((radecs[:,1]>=70.0) | (radecs[:,1]<=-70.0))[0]
-    # idx2 = np.where((radecs[:,0]>300.0) | (radecs[:,0]<60.0))[0]
-    # if (len(idx1) == 0) or (len(idx2) > 0):
-    #    return [], [], [], []
-
-    # xyz = np.array(xyz)
-    # proj = hp.projector.MollweideProj(rot=rotation, coord=None)
-    # x, y = proj.vec2xy(xyz[:, 0], xyz[:, 1], xyz[:, 2])
-    # xy = np.zeros(radecs.shape)
-    # xy[:, 0] = x
-    # xy[:, 1] = y
-    # path = matplotlib.path.Path(xy)
-    # patch = matplotlib.patches.PathPatch(
-    #     path, alpha=alpha, color=color, fill=True, zorder=3, edgecolor=edgecolor
-    # )
-
-    return ipix, radecs, area
+    return patch
 
 
 def getSquarePixels(
@@ -216,7 +181,7 @@ def getSquarePixels(
 
     idx1 = np.where(np.abs(radecs[:, 1]) >= 87.0)[0]
     if len(idx1) == 4:
-        return [], [], [], []
+        return None
 
     idx1 = np.where((radecs[:, 1] >= 87.0) | (radecs[:, 1] <= -87.0))[0]
     if len(idx1) > 0:
@@ -253,3 +218,108 @@ def getSquarePixels(
     # xy[:, 1] = y
 
     return ipix, radecs.T[0], radecs.T[1], area
+
+
+def get_square_patch(
+    ra_deg: float,
+    dec_deg: float,
+    tile_width_deg: float,
+    alpha: float = 0.4,
+    color="k",
+    edgecolor="k",
+    rotation=None,
+):
+    dec_corners = (dec_deg - tile_width_deg / 2.0, dec_deg + tile_width_deg / 2.0)
+
+    # security for the periodic limit conditions
+    radecs = []
+    for i, d in enumerate(dec_corners):
+        if d > 90.0:
+            d = 180.0 - d
+        elif d < -90.0:
+            d = -180 - d
+
+        ra_corners = [
+            ra_deg - (tile_width_deg / 2.0) / np.cos(np.deg2rad(d)),
+            ra_deg + (tile_width_deg / 2.0) / np.cos(np.deg2rad(d)),
+        ]
+
+        if i == 0:
+            ra_corners = ra_corners[::-1]
+
+        # security for the periodic limit conditions
+        for r in ra_corners:
+            if r > 360.0:
+                r = r - 360.0
+            elif r < 0.0:
+                r = 360.0 + r
+
+            radecs.append([r, d])
+
+    radecs = np.array(radecs)
+    idx1 = np.where(radecs[:, 0] >= 180.0)[0]
+    idx2 = np.where(radecs[:, 0] < 180.0)[0]
+    idx3 = np.where(radecs[:, 0] > 300.0)[0]
+    idx4 = np.where(radecs[:, 0] < 60.0)[0]
+    if (len(idx1) > 0 and len(idx2) > 0) and not (len(idx3) > 0 and len(idx4) > 0):
+        alpha = 0.0
+
+    idx1 = np.where(np.abs(radecs[:, 1]) >= 87.0)[0]
+    if len(idx1) == 4:
+        return None
+
+    idx1 = np.where((radecs[:, 1] >= 87.0) | (radecs[:, 1] <= -87.0))[0]
+    # if len(idx1) > 0:
+    #     radecs = np.delete(radecs, idx1[0], 0)
+
+    xyz = []
+    for r, d in radecs:
+        xyz.append(hp.ang2vec(r, d, lonlat=True))
+
+    # print(radecs, len(radecs))
+    # print(xyz, len(xyz))
+    # raise
+
+    idx1 = np.where((radecs[:, 1] >= 70.0) | (radecs[:, 1] <= -70.0))[0]
+    idx2 = np.where((radecs[:, 0] > 300.0) | (radecs[:, 0] < 60.0))[0]
+
+    # if (len(idx1) == 0) or (len(idx2) > 0):
+    #     return None
+
+    xyz = np.array(xyz)
+    proj = hp.projector.MollweideProj(rot=rotation, coord=None)
+    x, y = proj.vec2xy(xyz[:, 0], xyz[:, 1], xyz[:, 2])
+    xy = np.zeros(radecs.shape)
+    xy[:, 0] = x
+    xy[:, 1] = y
+    path = matplotlib.path.Path(xy)
+    patch = matplotlib.patches.PathPatch(
+        path, alpha=alpha, color=color, fill=True, zorder=3, edgecolor=edgecolor
+    )
+
+    # print(ra_deg, dec_deg, len(xyz))
+    # print(radecs)
+    # print(xyz)
+    # print(patch)
+    # raise
+
+    return patch
+
+
+def get_patch(
+    fov_type: str,
+    fov_deg: float,
+    ra_deg: float,
+    dec_deg: float,
+) -> matplotlib.patches.PathPatch:
+    if fov_type not in ALL_FOV_TYPES:
+        raise ValueError(
+            f"FOV type '{fov_type}' not recognized. " f"Must be one of {ALL_FOV_TYPES}"
+        )
+
+    if fov_type.lower() == "square":
+        return get_square_patch(ra_deg=ra_deg, dec_deg=dec_deg, tile_width_deg=fov_deg)
+    else:
+        return get_circle_path(
+            ra_pointing=ra_deg, dec_pointing=dec_deg, radius=fov_deg / 2.0
+        )
